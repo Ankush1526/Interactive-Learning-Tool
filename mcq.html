@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java MCQ Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .options button:hover {
+            background: #0056b3;
+        }
+        .correct {
+            background: #28a745 !important;
+        }
+        .wrong {
+            background: #dc3545 !important;
+        }
+        .leaderboard {
+            margin-top: 30px;
+        }
+        .leaderboard ul {
+            list-style: none;
+            padding: 0;
+        }
+        .leaderboard li {
+            background: #ddd;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .badge {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    margin-left: 10px;
+}
+.gold { background: gold; }
+.silver { background: silver; }
+.bronze { background: #cd7f32; }
+#resetLeaderboardBtn {
+    background-color: red;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#resetLeaderboardBtn:hover {
+    background-color: darkred;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Java MCQ Quiz</h2>
+        <div id="quiz"></div>
+        <button onclick="nextQuestion()">Next</button>
+        <h3>Score: <span id="score">0</span></h3>
+        <div class="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "What is inheritance in Java?", options: ["A feature to create new classes from existing ones", "A way to declare variables", "A type of loop", "None of the above"], correct: 0 },
+            { q: "Which keyword is used for abstraction?", options: ["abstract", "final", "interface", "static"], correct: 0 },
+            { q: "What does an if-else statement do?", options: ["Loops through elements", "Executes different blocks based on conditions", "Defines a class", "None of the above"], correct: 1 },
+            { q: "Which loop is used for a known number of iterations?", options: ["while", "for", "do-while", "switch"], correct: 1 },
+            { q: "Which data structure stores multiple values of the same type?", options: ["Class", "Method", "Array", "Loop"], correct: 2 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        const quizDiv = document.getElementById("quiz");
+        
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            quizDiv.innerHTML = `<div class='question'>${q.q}</div>` +
+                q.options.map((opt, i) => `<div class='options'><button onclick='checkAnswer(this, ${i})'>${opt}</button></div>`).join('');
+        }
+
+        function checkAnswer(btn, selected) {
+            const correctIndex = questions[currentQuestion].correct;
+            if (selected === correctIndex) {
+                btn.classList.add("correct");
+                score++;
+                document.getElementById("score").innerText = score;
+            } else {
+                btn.classList.add("wrong");
+            }
+            setTimeout(nextQuestion, 1000);
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                saveScore();
+                alert(`Quiz finished! Your score is ${score}`);
+                showLeaderboard();
+            }
+        }
+
+        function saveScore() {
+            const name = prompt("Enter your name for the leaderboard:");
+            if (name) {
+                let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+                leaderboard.push({ name, score });
+                leaderboard.sort((a, b) => b.score - a.score);
+                localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+            }
+        }
+
+        function showLeaderboard() {
+    let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+    let leaderboardHTML = '';
+
+    leaderboard.forEach((entry, index) => {
+        let badge = '';
+        if (index === 0) badge = '<span class="badge gold">🥇</span>';
+        else if (index === 1) badge = '<span class="badge silver">🥈</span>';
+        else if (index === 2) badge = '<span class="badge bronze">🥉</span>';
+        
+        leaderboardHTML += `<li>${entry.name} - ${entry.score} ${badge}</li>`;
+    });
+
+    document.getElementById("leaderboard-list").innerHTML = leaderboardHTML;
+}
+
+
+        loadQuestion();
+        showLeaderboard();
+        function resetLeaderboard() {
+    if (confirm("Are you sure you want to reset the leaderboard?")) {
+        localStorage.removeItem("leaderboard");
+        showLeaderboard(); // Refresh leaderboard display
+    }
+}
+
+    </script>
+    <button id="resetLeaderboardBtn" onclick="resetLeaderboard()">Reset Leaderboard</button>
+    <a class="ne" href="/certificate.php"><i class="bi bi-person-fill"></i> Profile</a>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 3 Room with Array Explanation</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #message {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            display: none; /* Hidden initially */
+        }
+        #videoContainer {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #videoContainer video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="message"></div>
+    <div id="videoContainer">
+        <video id="levelVideo" controls autoplay>
+            <source src="array.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xb0c4de); // Light blue background
+
+        // Camera setup
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 10);
+
+        // Renderer setup
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 2, 0);
+        controls.update();
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Increased ambient light
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        directionalLight.position.set(10, 20, 10);
+        scene.add(directionalLight);
+
+        // Floor
+        const floorGeometry = new THREE.PlaneGeometry(20, 20);
+        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xd3d3d3 }); // Light grey floor
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        // Table pillar
+        const pillarGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 16);
+        const pillarMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 }); // Same color as the table
+        const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
+        pillar.position.set(0, 0.5, 2); // Align pillar under the table
+        scene.add(pillar);
+
+        // Walls
+        function createWall(width, height, depth, color, x, y, z) {
+            const wallGeometry = new THREE.BoxGeometry(width, height, depth);
+            const wallMaterial = new THREE.MeshStandardMaterial({ color });
+            const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+            wall.position.set(x, y, z);
+            return wall;
+        }
+
+        const wall1 = createWall(20, 10, 0.5, 0xf4a460, 0, 5, -10); // Back wall
+        const wall2 = createWall(0.5, 10, 20, 0x8b4513, -10, 5, 0); // Left wall
+        const wall3 = createWall(0.5, 10, 20, 0xf4a460, 10, 5, 0); // Right wall
+        scene.add(wall1, wall2, wall3);
+
+        // Door in front
+        const doorGeometry = new THREE.BoxGeometry(3, 6, 0.2);
+        const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 }); // Brown door
+        const door = new THREE.Mesh(doorGeometry, doorMaterial);
+        door.position.set(0, 3, 10.1);
+        scene.add(door);
+
+        // Table
+        const tableGeometry = new THREE.BoxGeometry(5, 0.5, 3);
+        const tableMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 }); // Brown table
+        const table = new THREE.Mesh(tableGeometry, tableMaterial);
+        table.position.set(0, 1, 2);
+        scene.add(table);
+
+        // Containers on the table
+        function createContainer(x, z, color) {
+            const containerGeometry = new THREE.BoxGeometry(2, 1, 2);
+            const containerMaterial = new THREE.MeshStandardMaterial({ color });
+            const container = new THREE.Mesh(containerGeometry, containerMaterial);
+            container.position.set(x, 1.75, z);
+            scene.add(container);
+            return container;
+        }
+
+        const container1 = createContainer(-1.5, 2, 0x8b4513); // Container 1
+        const container2 = createContainer(1.5, 2, 0x8b4513); // Container 2
+
+        // Eggs in container 1
+        function createEgg(x, y, z) {
+            const eggGeometry = new THREE.SphereGeometry(0.25, 16, 16); // Slightly larger egg
+            const eggMaterial = new THREE.MeshStandardMaterial({ color: 0xffffe0 });
+            const egg = new THREE.Mesh(eggGeometry, eggMaterial);
+            egg.position.set(x, y + 0.4, z); // Adjusted height
+            scene.add(egg);
+        }
+
+        for (let i = -0.5; i <= 0.5; i += 0.5) {
+            createEgg(container1.position.x + i, container1.position.y + 0.25, container1.position.z);
+        }
+
+        // Eggs and apples in container 2
+        function createApple(x, y, z) {
+            const appleGeometry = new THREE.SphereGeometry(0.3, 16, 16); // Slightly larger apple
+            const appleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+            const apple = new THREE.Mesh(appleGeometry, appleMaterial);
+            apple.position.set(x, y + 0.4, z); // Adjusted height
+            scene.add(apple);
+        }
+
+        for (let i = -0.5; i <= 0.5; i += 0.5) {
+            if (i === 0) {
+                createApple(container2.position.x + i, container2.position.y + 0.25, container2.position.z);
+            } else {
+                createEgg(container2.position.x + i, container2.position.y + 0.25, container2.position.z);
+            }
+        }
+
+        // Load character model
+        const loader = new THREE.GLTFLoader();
+        let character = null;
+        loader.load(
+            'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/models/gltf/Soldier.glb',
+            (gltf) => {
+                character = gltf.scene;
+                character.scale.set(1.5, 1.5, 1.5);
+                character.position.set(0, 0, 5);
+                scene.add(character);
+            },
+            undefined,
+            (error) => {
+                console.error('An error occurred while loading the character model:', error);
+            }
+        );
+
+        // Interaction logic
+        
+        document.addEventListener('keydown', (event) => {
+            if (!character) return;
+            switch (event.key) {
+                case 'ArrowUp': character.position.z -= 0.5; break;
+                case 'ArrowDown': character.position.z += 0.5; break;
+                case 'ArrowLeft': character.position.x -= 0.5; break;
+                case 'ArrowRight': character.position.x += 0.5; break;
+            }
+            checkCharacterProximity();
+        });
+        
+        function showOptions() {
+            const message = document.getElementById('message');
+            message.style.display = 'block';
+            message.innerHTML = 'Choose the correct option: <br> <button onclick="checkAnswer(1)">Container 1 (Array)</button> <button onclick="checkAnswer(2)">Container 2 (Not an Array)</button>';
+        }
+
+        function checkAnswer(option) {
+            if (option === 1) {
+                alert('Correct! Moving to Level 4...');
+                window.location.href = 'level4.html';
+            } else {
+                alert('Incorrect! Try again.');
+            }
+        }
+        
+        function checkCharacterProximity() {
+            if (!character) return;
+            const distance = Math.sqrt(
+                Math.pow(character.position.x - table.position.x, 2) +
+                Math.pow(character.position.z - table.position.z, 2)
+            );
+            if (distance < 2) {
+                showOptions();
+            }
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: rgb(161, 138, 138);
+        }
+
+        table {
+            background-color: rgb(59, 53, 53);
+            font-style: italic;
+            position: sticky;
+            /* text-decoration: none; */
+        }
+
+        a {
+            text-decoration: none;
+            /* font-size: medium; */
+            font-size: 55%;
+            /* width: 80px; */
+        }
+
+        /* input{
+          height: 35%;
+          width: 200px;
+        } */
+        .h {
+            background-color: rgb(238, 58, 58);
+        }
+
+        a:visited {
+            color: white;
+        }
+
+        a:hover {
+            color: red
+        }
+
+        a:active {
+            color: rgb(251, 251, 163)
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .container img {
+            width: 100%;
+            height: auto;
+        }
+
+        td {
+            font-size: 40px;
+            /* font-size: larger; */
+        }
+
+        .new {
+            background-size: cover;
+            position: static;
+        }
+
+        .c {
+            display: inline;
+        }
+
+        .d {
+            display: inline;
+        }
+
+        h1 {
+            align-items: center;
+            background-color: rgb(54, 47, 47);
+            color: aliceblue;
+        }
+
+        .r {
+            margin-left: 45%;
+            height: 10%;
+        }
+
+        .r input {
+            height: 10%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body:before {
+            content: '';
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background-image: url(background.jpg);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            -webkit-background-size: cover;
+            background-size: cover;
+            -webkit-filter: blur(10px);
+            -moz-filter: blur(10px);
+            filter: blur(10px);
+        }
+
+        .contact-form {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 350px;
+            padding: 80px 40px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .avatar {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            top: calc(-80px/2);
+            left: 190px;
+        }
+
+        .contact-form h2 {
+            margin: 0;
+            padding: 0 0 20px;
+            color: #fff;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .contact-form p {
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .contact-form input {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .contact-form input[type=username],
+        .contact-form input[type=password] {
+            border: none;
+            border-bottom: 1px solid #a08d8d;
+            background: transparent;
+            outline: none;
+            height: 40px;
+            color: #a09191;
+            text-emphasis-color: black;
+            font-size: 16px;
+        }
+
+        .contact-form Button[type=button] {
+            height: 30px;
+            color: #fff;
+            font-size: 15px;
+            background: red;
+            cursor: pointer;
+            border-radius: 25px;
+            border: none;
+            outline: none;
+            margin-top: 15%;
+        }
+
+        .contact-form Button {
+            background-color: red;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .contact-form a {
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        input[type=checkbox] {
+            width: 20%;
+        }
+
+        .container-fluid {
+            margin-top: 0%;
+            background-color: rgb(59, 53, 53);
+            color: aliceblue;
+            /* height: 11%; */
+            /* width: 100%;  */
+        }
+
+        .navbar {
+            height: 10vh;
+            margin-top: 0;
+            background-color: rgb(44, 40, 40);
+        }
+
+        input {
+            color: rgb(225, 59, 59);
+            width: 10%;
+        }
+
+        ul {
+            /* height: 11%; */
+            list-style-type: none;
+            /* padding: 0; */
+        }
+
+        li {
+            font-style: oblique;
+            justify-content: center;
+            font-size: larger;
+            margin-top: 9%;
+            margin-left: 17%;
+        }
+
+        .container-fluid img {
+            border-radius: 100%;
+            border-bottom-right-radius: 10%;
+            height: 5%;
+            width: 6%;
+        }
+    </style>
+    <!-- <script l="javascript"> -->
+    <!-- function f(){ -->
+    <!-- /* window.open('registration.html') */ -->
+    <!-- /* } */ -->
+    <!-- /* </script> */  -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container-fluid">
+            <img src="newlogo.jpg">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">HOME</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">ABOUT</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Discussion.html">Discussion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Teams.html">TEAMS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="login.html">LOGIN AND SIGNUP</a>
+                    </li>
+
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search here" aria-label="Search"
+                        style="border-top-left-radius: 15%; border-bottom-right-radius: 15%; background-color:  rgb(0, 0, 0); color: rgb(240, 5, 5); font-size: 100%;box-shadow: 10%;">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transparent Login Form with Blur Background</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body> -->
+    <div class="contact-form">
+        <h6 style="color: aquamarine;">login</h6>
+        <img alt="" class="avatar" src="https://i.postimg.cc/zDyt7KCv/a1.jpg">
+        <h2>Contact Form</h2>
+        <!-- <form action="index.html" method="post" > -->
+
+        <h2>Login Form</h2>
+        <form action="login_process.php" method="post">
+            <input type="text" name="username" placeholder="Enter your username" required><br><br>
+            <input type="password" name="password" placeholder="Enter your password" required><br><br>
+            <button type="submit">Login</button>
+        </form>
+        <div class="register" style="color: red;">
+            Not have an account? <a href="signup.php">
+                Register Now
+            </a>
+        </div>
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 3 - Abstraction Concept</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #explanation { 
+            position: absolute; 
+            top: 50%; 
+            left: 10%; 
+            transform: translateY(-50%); 
+            background: rgba(255, 255, 255, 0.9); 
+            padding: 20px; 
+            border-radius: 10px; 
+            text-align: center;
+            display: none;
+        }
+        #videoContainer {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #videoContainer video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoContainer">
+        <video id="levelVideo" controls autoplay>
+            <source src="abs.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div id="explanation">
+        <h2>Abstraction Concept</h2>
+        <p>The car moves, but the internal functionality is hidden from the user.</p>
+        <button onclick="proceedToNextLevel()">NOW MCQ TIME!!</button>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script>
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 10);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 2, 0);
+        controls.update();
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+        directionalLight.position.set(10, 20, 10);
+        scene.add(directionalLight);
+
+        const floor = new THREE.Mesh(
+            new THREE.PlaneGeometry(20, 20),
+            new THREE.MeshStandardMaterial({ color: 0x333333 })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
+
+        function createWall(width, height, depth, color, x, y, z) {
+            const wall = new THREE.Mesh(
+                new THREE.BoxGeometry(width, height, depth),
+                new THREE.MeshStandardMaterial({ color })
+            );
+            wall.position.set(x, y, z);
+            return wall;
+        }
+        scene.add(
+            createWall(20, 10, 0.5, 0x8b4513, 0, 5, -10), 
+            createWall(0.5, 10, 20, 0x8b4513, -10, 5, 0), 
+            createWall(0.5, 10, 20, 0xf4a460, 10, 5, 0)
+        );
+
+        let carModel;
+        const carLoader = new THREE.GLTFLoader();
+        carLoader.load(
+            "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/CesiumMilkTruck/glTF/CesiumMilkTruck.gltf",
+            (gltf) => {
+                carModel = gltf.scene;
+                carModel.scale.set(1, 1, 1);
+                carModel.position.set(0, 0, 5);
+                carModel.rotation.y = Math.PI;
+                scene.add(carModel);
+            },
+            undefined,
+            (error) => console.error("❌ Error loading car model:", error)
+        );
+
+        const door = new THREE.Mesh(
+            new THREE.BoxGeometry(2, 5, 0.1),
+            new THREE.MeshStandardMaterial({ color: 0x8b4513 })
+        );
+        door.position.set(0, 2.5, -9.5);
+        scene.add(door);
+
+        let moveSpeed = 0.1;
+        const keyboard = {};
+
+        window.addEventListener("keydown", (event) => {
+            keyboard[event.code] = true;
+        });
+        window.addEventListener("keyup", (event) => {
+            keyboard[event.code] = false;
+        });
+
+        function updateCarMovement() {
+            if (!carModel) return;
+            if (keyboard["ArrowUp"]) carModel.position.z -= moveSpeed;
+            if (keyboard["ArrowDown"]) carModel.position.z += moveSpeed;
+            if (keyboard["ArrowLeft"]) carModel.rotation.y += 0.05;
+            if (keyboard["ArrowRight"]) carModel.rotation.y -= 0.05;
+
+            if (carModel.position.z <= -9) {
+                document.getElementById("explanation").style.display = "block";
+            }
+        }
+
+        function proceedToNextLevel() {
+            window.location.href = "mcq.html";
+        }
+
+        // Rod Fully Connecting Both Walls
+        const rod = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.2, 0.2, 22, 32), // Extended length
+            new THREE.MeshStandardMaterial({ color: 0x8b4513 })
+        );
+        rod.position.set(0, 7, 0);
+        rod.rotation.z = Math.PI / 2;
+        scene.add(rod);
+
+        // Larger Banner Hanging in the Middle
+        const bannerGeometry = new THREE.PlaneGeometry(10, 3); // Increased width and height
+        const bannerMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700, side: THREE.DoubleSide });
+        const banner = new THREE.Mesh(bannerGeometry, bannerMaterial);
+        banner.position.set(0, 6, 0.2); // Slightly forward
+        scene.add(banner);
+
+        // "ABSTRACTION" Text - Bigger and More Visible
+        const loader = new THREE.FontLoader();
+        loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function (font) {
+            const textGeometry = new THREE.TextGeometry('ABSTRACTION', {
+                font: font,
+                size: 0.8, // Larger text
+                height: 0.2
+            });
+
+            const textMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+            textMesh.position.set(-4, 6.5, 0.3); // Centered on banner
+            scene.add(textMesh);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            updateCarMovement();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

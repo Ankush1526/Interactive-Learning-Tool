@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D House with Character Inside</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #timer {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            display: none; /* Hidden initially */
+        }
+        #explanation {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            display: none; /* Hidden initially */
+        }
+        #level3Button {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none; /* Hidden initially */
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xb0c4de); // Light blue background
+
+        // Camera setup
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 10); // Starting inside the house
+
+        // Renderer setup
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 2, 0);
+        controls.update();
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Increased ambient light
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Increased directional light intensity
+        directionalLight.position.set(10, 20, 10);
+        scene.add(directionalLight);
+
+        // Floor
+        const floorGeometry = new THREE.PlaneGeometry(20, 20);
+        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xd3d3d3 }); // Light grey floor
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        scene.add(floor);
+        // Table pillar
+const pillarGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 16);
+const pillarMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 }); // Same color as the table
+const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
+pillar.position.set(0, 0.5, 2); // Align pillar under the table
+scene.add(pillar);
+
+
+        // Walls
+        function createWall(width, height, depth, color, x, y, z) {
+            const wallGeometry = new THREE.BoxGeometry(width, height, depth);
+            const wallMaterial = new THREE.MeshStandardMaterial({ color });
+            const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+            wall.position.set(x, y, z);
+            return wall;
+        }
+
+        // Add walls to the house (left wall brown, other walls remain as is)
+        const wall1 = createWall(20, 10, 0.5, 0xf4a460, 0, 5, -10); // Back wall
+        const wall2 = createWall(0.5, 10, 20, 0x8b4513, -10, 5, 0); // Left wall (brown)
+        const wall3 = createWall(0.5, 10, 20, 0xf4a460, 10, 5, 0); // Right wall
+        scene.add(wall1, wall2, wall3);
+
+         // TV model (Position TV closer to the right wall)
+         const tvGeometry = new THREE.BoxGeometry(4, 2.5, 0.1);
+        const tvMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 }); // Black TV screen
+        const tv = new THREE.Mesh(tvGeometry, tvMaterial);
+        tv.position.set(5, 5, -5); // Mounted on the right wall at a more realistic height
+        scene.add(tv);
+        // Door (yellow color)
+        const doorGeometry = new THREE.BoxGeometry(3, 6, 0.2);
+        const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 }); // Brown door
+        const door = new THREE.Mesh(doorGeometry, doorMaterial);
+        door.position.set(0, 3, 10.1); // Positioned at the front
+        scene.add(door);
+
+        // Dining table
+        const tableGeometry = new THREE.BoxGeometry(5, 0.5, 3);
+        const tableMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 }); // Brown table
+        const table = new THREE.Mesh(tableGeometry, tableMaterial);
+        table.position.set(0, 1, 2); // Positioned before the character
+        scene.add(table);
+
+        // Flower pots
+        function createFlowerPot(x, y, z) {
+            const potGeometry = new THREE.CylinderGeometry(0.5, 0.7, 1, 16);
+            const potMaterial = new THREE.MeshStandardMaterial({ color: 0x8b0000 }); // Red pot
+            const pot = new THREE.Mesh(potGeometry, potMaterial);
+            pot.position.set(x, y, z);
+            scene.add(pot);
+
+            const plantGeometry = new THREE.ConeGeometry(0.5, 1, 16);
+            const plantMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 }); // Green plant
+            const plant = new THREE.Mesh(plantGeometry, plantMaterial);
+            plant.position.set(x, y + 0.8, z);
+            scene.add(plant);
+        }
+
+        createFlowerPot(-2, 1, 1); // Positioned before the character
+        createFlowerPot(2, 1, 1); // Positioned before the character
+
+        // Second room with proper gate (yellow color gate only)
+        const roomWall1 = createWall(10, 10, 0.5, 0xffe4c4, 0, 5, -15); // Back wall of second room
+        const roomWall2 = createWall(0.5, 10, 10, 0xffe4c4, -5, 5, -10); // Left wall of second room
+        const roomWall3 = createWall(0.5, 10, 10, 0xffe4c4, 5, 5, -10); // Right wall of second room
+
+        // Yellow door (gate) only
+        const gateGeometry = new THREE.BoxGeometry(3, 6, 0.2);
+        const gateMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 }); // Yellow gate
+        const gate = new THREE.Mesh(gateGeometry, gateMaterial);
+        gate.position.set(0, 3, -10.1); // Positioned as the gate of the second room
+        scene.add(roomWall1, roomWall2, roomWall3, gate);
+
+        // Load character model
+        const loader = new THREE.GLTFLoader();
+        let character = null;
+        loader.load(
+            'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/models/gltf/Soldier.glb',
+            (gltf) => {
+                character = gltf.scene;
+                character.scale.set(1.5, 1.5, 1.5);
+                character.position.set(0, 0, 5);
+                scene.add(character);
+            },
+            undefined,
+            (error) => {
+                console.error('An error occurred while loading the character model:', error);
+            }
+        );
+
+        // Timer and explanation display
+        const timerDisplay = document.createElement('div');
+        timerDisplay.id = 'timer';
+        document.body.appendChild(timerDisplay);
+
+        const explanationDisplay = document.createElement('div');
+        explanationDisplay.id = 'explanation';
+        document.body.appendChild(explanationDisplay);
+
+        const level3Button = document.createElement('div');
+        level3Button.id = 'level3Button';
+        level3Button.textContent = 'Go to Level 3';
+        level3Button.onclick = () => window.location.href = 'level3.html'; // Link to level 3 page
+        document.body.appendChild(level3Button);
+
+        // Character movement logic
+        const moveSpeed = 0.5;
+        let waitingForTimer = false;
+        let timerInterval;
+
+        document.addEventListener('keydown', (event) => {
+            if (!character || waitingForTimer) return; // Ensure character is loaded and not waiting
+
+            switch (event.key) {
+                case 'ArrowUp': // Move forward
+                    character.position.z -= moveSpeed;
+                    break;
+                case 'ArrowDown': // Move backward
+                    character.position.z += moveSpeed;
+                    break;
+                case 'ArrowLeft': // Move left
+                    character.position.x -= moveSpeed;
+                    break;
+                case 'ArrowRight': // Move right
+                    character.position.x += moveSpeed;
+                    break;
+                case 'Enter': // Check for entering the room
+                    checkRoomEntry();
+                    break;
+            }
+        });
+
+        function checkRoomEntry() {
+            if (!character) return;
+
+            const distance = character.position.distanceTo(new THREE.Vector3(0, 0, -12)); // Approximate position of second room
+            if (distance < 3) { // If near the second room
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            waitingForTimer = true;
+            let timeLeft = 10; // 10 seconds timer
+            timerDisplay.style.display = 'block'; // Show timer
+            explanationDisplay.style.display = 'none'; // Hide explanation
+
+            // Timer countdown
+            timerInterval = setInterval(() => {
+                timerDisplay.textContent = `Please wait... ${timeLeft}s left`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.style.display = 'none';
+                    showExplanation();
+                }
+            }, 1000);
+        }
+
+        function showExplanation() {
+            explanationDisplay.style.display = 'block';
+            explanationDisplay.textContent = `Explanation of For Loop: 
+            In the for loop, we start with i=10, and the loop continues until i is less than 0. 
+            At each step, i is incremented by 1 (i++) until the condition is met. 
+            This demonstrates a simple loop iteration.`;
+
+            level3Button.style.display = 'block'; // Show the level 3 button
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

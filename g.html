@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D House with Character</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #explanation {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: center;
+            display: none; /* Hidden initially */
+        }
+        #nextLevelBtn {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none; /* Hidden initially */
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb); // Sky blue
+
+        // Camera setup
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(20, 10, 30);
+
+        // Renderer setup
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 5, 0);
+        controls.update();
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(10, 20, 10);
+        scene.add(directionalLight);
+
+        // Ground
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 }); // Green ground
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // Create a bungalow
+        function createBungalow() {
+            const bungalowGroup = new THREE.Group();
+
+            // Main building
+            const mainGeometry = new THREE.BoxGeometry(12, 6, 10);
+            const mainMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700 }); // Yellow color
+            const mainBuilding = new THREE.Mesh(mainGeometry, mainMaterial);
+            mainBuilding.position.y = 3; // Lift above ground
+            bungalowGroup.add(mainBuilding);
+
+            // Roof
+            const roofGeometry = new THREE.ConeGeometry(9, 4, 4);
+            const roofMaterial = new THREE.MeshStandardMaterial({ color: 0x8b0000 }); // Red roof
+            const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+            roof.position.y = 8; // Above main building
+            roof.rotation.y = Math.PI / 4; // Pyramid-like effect
+            bungalowGroup.add(roof);
+
+            // Door
+            const doorGeometry = new THREE.BoxGeometry(2, 3, 0.1);
+            const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x654321 }); // Brown door
+            const door = new THREE.Mesh(doorGeometry, doorMaterial);
+            door.position.set(0, 1.5, 5.05); // Front of the building
+            bungalowGroup.add(door);
+
+            // Position bungalow
+            bungalowGroup.position.set(-10, 0, 0); 
+            return bungalowGroup;
+        }
+
+        // Add bungalow to the scene
+        const bungalow = createBungalow();
+        scene.add(bungalow);
+
+        // Load character model
+        const loader = new THREE.GLTFLoader();
+        let character = null;
+        loader.load(
+            'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/models/gltf/Soldier.glb',
+            (gltf) => {
+                character = gltf.scene;
+                character.scale.set(2, 2, 2);
+                character.position.set(0, 0, 0);
+                scene.add(character);
+            },
+            undefined,
+            (error) => {
+                console.error('An error occurred while loading the character model:', error);
+            }
+        );
+
+        // Add keys in front of the house
+        const keys = [];
+        const keyPositions = [
+            [-5, 0.5, 10],
+            [-2, 0.5, 10],
+            [1, 0.5, 10],
+            [4, 0.5, 10],
+            [7, 0.5, 10]
+        ];
+        const correctKeyIndex = 1; // The second key is the correct one
+        let attempts = 2;
+
+        for (let i = 0; i < 5; i++) {
+            const keyGeometry = new THREE.BoxGeometry(1, 0.2, 0.5);
+            const keyMaterial = new THREE.MeshStandardMaterial({ color: i === correctKeyIndex ? 0x00ff00 : 0xff0000 });
+            const key = new THREE.Mesh(keyGeometry, keyMaterial);
+            key.position.set(...keyPositions[i]);
+            key.name = `key${i}`;
+            keys.push(key);
+            scene.add(key);
+        }
+
+        // Character movement logic
+        const moveSpeed = 0.5;
+        document.addEventListener('keydown', (event) => {
+            if (!character) return; // Ensure character is loaded
+
+            switch (event.key) {
+                case 'ArrowUp': // Move forward
+                    character.position.z -= moveSpeed;
+                    break;
+                case 'ArrowDown': // Move backward
+                    character.position.z += moveSpeed;
+                    break;
+                case 'ArrowLeft': // Move left
+                    character.position.x -= moveSpeed;
+                    break;
+                case 'ArrowRight': // Move right
+                    character.position.x += moveSpeed;
+                    break;
+                case 'Enter': // Check for interaction
+                    checkKeyInteraction();
+                    break;
+            }
+        });
+
+        function checkKeyInteraction() {
+            if (!character) return;
+
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                const distance = character.position.distanceTo(key.position);
+
+                if (distance < 1.5) {
+                    if (i === correctKeyIndex) {
+                        showExplanation();
+                    } else {
+                        attempts--;
+                        if (attempts <= 0) {
+                            alert('Game over! You ran out of attempts.');
+                            window.location.reload(); // Restart game
+                        } else {
+                            alert(`Wrong key! ${attempts} attempts left.`);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        function showExplanation() {
+            const explanation = document.createElement('div');
+            explanation.id = 'explanation';
+            explanation.innerHTML = `
+                <h2>If-Else Condition Explanation:</h2>
+                <p>In programming, an "if-else" condition allows the program to make decisions. Here, the character can only enter the house or move to level 2 if the correct key is selected. If the second key (index 1) is chosen, the character proceeds to the next level. If any other key is chosen, the game will notify you that it's incorrect.</p>
+                <p><strong>if</strong> the correct key is selected, the character proceeds to the next level.<br>
+                <strong>else</strong> if any other key is selected, the character cannot enter and loses an attempt.</p>`
+            ;
+            document.body.appendChild(explanation);
+
+            const nextLevelBtn = document.createElement('button');
+            nextLevelBtn.id = 'nextLevelBtn';
+            nextLevelBtn.textContent = 'Next Level';
+            nextLevelBtn.onclick = function () {
+                window.location.href = 'level2.html'; // Redirect to Level 2
+            };
+            document.body.appendChild(nextLevelBtn);
+
+            // Show explanation and next level button
+            document.getElementById('explanation').style.display = 'block';
+            document.getElementById('nextLevelBtn').style.display = 'inline-block';
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+        function createPoll() {
+            const pollGroup = new THREE.Group();
+
+            const poleGeometry = new THREE.CylinderGeometry(0.3, 0.3, 10);
+            const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+            const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+            pole.position.set(5, 5, 5);
+            pollGroup.add(pole);
+
+            const boardGeometry = new THREE.PlaneGeometry(6, 3);
+            const boardMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xffffff, 
+                side: THREE.DoubleSide 
+            });
+            const board = new THREE.Mesh(boardGeometry, boardMaterial);
+            board.position.set(5, 11, 5);
+            board.rotation.y = Math.PI / 6;
+            pollGroup.add(board);
+
+            const loader = new THREE.TextureLoader();
+            loader.load('https://dummyimage.com/300x150/000/fff.png&text=IF-ELSE', (texture) => {
+                board.material.map = texture;
+                board.material.needsUpdate = true;
+            });
+            
+            return pollGroup;
+        }
+
+        const poll = createPoll();
+        scene.add(poll);
+        function createGarden() {
+            const gardenGroup = new THREE.Group();
+            const treeGeometry = new THREE.CylinderGeometry(0.5, 0.5, 3);
+            const treeMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+            const leafGeometry = new THREE.SphereGeometry(2);
+            const leafMaterial = new THREE.MeshStandardMaterial({ color: 0x006400 });
+            
+            const radius = 20; 
+            const numTrees = 10;
+            for (let i = 0; i < numTrees; i++) {
+                const angle = (i / numTrees) * Math.PI * 2;
+                const x = Math.cos(angle) * radius - 10; // Offset for house position
+                const z = Math.sin(angle) * radius;
+                
+                const tree = new THREE.Mesh(treeGeometry, treeMaterial);
+                tree.position.set(x, 1.5, z);
+                
+                const leaves = new THREE.Mesh(leafGeometry, leafMaterial);
+                leaves.position.set(x, 4, z);
+                
+                gardenGroup.add(tree);
+                gardenGroup.add(leaves);
+            }
+            return gardenGroup;
+        }
+
+        const garden = createGarden();
+        scene.add(garden);
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Theory</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f4f4f4;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+        }
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+        .topic {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin-bottom: 5px;
+            background: #ddd;
+            text-decoration: none;
+            color: black;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>JavaScript Theory</h2>
+        <a href="#" onclick="showTopic('ifelse')">Control Flow (if/else)</a>
+        <a href="#" onclick="showTopic('loops')">Loops</a>
+        <a href="#" onclick="showTopic('arrays')">Arrays</a>
+        <a href="#" onclick="showTopic('inheritance')">Inheritance</a>
+        <a href="#" onclick="showTopic('abstraction')">Abstraction</a>
+        <a href="#" onclick="showTopic('functions')">Functions</a>
+        <a href="#" onclick="showTopic('callbacks')">Callbacks</a>
+    </div>
+
+    <div class="content">
+        <div id="ifelse" class="topic active">
+            <h2>Control Flow (if/else)</h2>
+            <p>If-else statements help in decision-making in JavaScript.</p>
+            <pre><code>if (condition) {
+    // Code if condition is true
+} else {
+    // Code if condition is false
+}</code></pre>
+        </div>
+        <div id="loops" class="topic">
+            <h2>Loops</h2>
+            <p>Loops help in executing a block of code multiple times.</p>
+            <pre><code>for (let i = 0; i < 5; i++) {
+    console.log(i);
+}</code></pre>
+        </div>
+        <div id="arrays" class="topic">
+            <h2>Arrays</h2>
+            <p>Arrays are used to store multiple values in a single variable.</p>
+            <pre><code>let fruits = ['Apple', 'Banana', 'Cherry'];</code></pre>
+        </div>
+        <div id="inheritance" class="topic">
+            <h2>Inheritance</h2>
+            <p>Inheritance allows a class to inherit properties from another class.</p>
+            <pre><code>class Animal {
+    constructor(name) {
+        this.name = name;
+    }
+}
+class Dog extends Animal {
+    bark() {
+        console.log("Woof!");
+    }
+}</code></pre>
+        </div>
+        <div id="abstraction" class="topic">
+            <h2>Abstraction</h2>
+            <p>Abstraction hides complex implementation details.</p>
+            <pre><code>class Shape {
+    constructor() {
+        if (this.constructor === Shape) {
+            throw new Error('Abstract classes cannot be instantiated.');
+        }
+    }
+    calculateArea() {
+        throw new Error('Method must be implemented.');
+    }
+}</code></pre>
+        </div>
+        <div id="functions" class="topic">
+            <h2>Functions</h2>
+            <p>Functions are reusable blocks of code.</p>
+            <pre><code>function greet(name) {
+    return `Hello, ${name}`;
+}</code></pre>
+        </div>
+        <div id="callbacks" class="topic">
+            <h2>Callbacks</h2>
+            <p>Callbacks are functions passed as arguments to other functions.</p>
+            <pre><code>function fetchData(callback) {
+    setTimeout(() => {
+        callback("Data received");
+    }, 1000);
+}</code></pre>
+        </div>
+    </div>
+    <script>
+        function showTopic(topicId) {
+            let topics = document.querySelectorAll('.topic');
+            topics.forEach(topic => topic.classList.remove('active'));
+            document.getElementById(topicId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
