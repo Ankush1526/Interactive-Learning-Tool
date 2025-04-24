@@ -187,7 +187,7 @@ $currentDate = date("jS F Y");
 
                 <div class="certificate-text">
                     For successfully completing <span class="course-name">'Bsic Programming concepts'</span><br>
-                    as part of the Advanced Computer Studies Electives. Presented
+                    as part of the Advanced Computer Studies Electives.
                 </div>
 
                 <div class="date-presented">

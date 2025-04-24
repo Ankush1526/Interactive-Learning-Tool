@@ -363,12 +363,15 @@ animation-delay: 1.4;
             background-color: rgb(59, 53, 53);
             color: aliceblue;
              /* height: 11%; */
-            /* width: 100%;  */
+            /* width: 100%; */ 
          }  
         .navbar{
           height: 10vh;
             margin-top: 0;
             background-color: rgb(44, 40, 40);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
         }
          input{
             color: white;
@@ -417,7 +420,7 @@ animation-delay: 1.4;
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                      <a class="nav-link "  href="index.html">HOME</a>
+                      <a class="nav-link "  href="try.html">HOME</a>
                   </li>
                   <li class="nav-item">
                       <a class="nav-link" href="about.html">ABOUT</a>
@@ -428,10 +431,23 @@ animation-delay: 1.4;
                   <li class="nav-item">
                       <a class="nav-link active"aria-current="page" href="Teams.html">TEAMS</a>
                   </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="login.html">LOGIN AND SIGNUP</a>
-                  </li>
-                
+                  <li class="nav-item d-flex align-items-center">
+                    <?php
+                    session_start();
+                    if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <?php echo htmlspecialchars($_SESSION['username']); ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/profile.php"><i class="bi bi-person-fill"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="/logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a class="nav-link" href="/login.php">LOGIN AND SIGNUP</a>
+                    <?php endif; ?>
+                </li>
               </ul>
               <form class="d-flex" role="search">
                   <input class="form-control me-2" type="search" placeholder="Search here" aria-label="Search" style="border-top-left-radius: 15%; border-bottom-right-radius: 15%; background-color:  rgb(0, 0, 0); color: rgb(240, 5, 5); font-size: 100%;box-shadow: 10%;">
@@ -519,23 +535,52 @@ animation-delay: 1.4;
                   </div>
                 </div>
               </div>
-              <!-- <div class="flip-card2">
-                <div class="flip-card-inner">
-                  <div class="flip-card-front">
-                    <img src="amishra.jpeg" alt="Avatar" style="width:300px;height:300px;">
-                  </div>
-                  <div class="flip-card-back">
-                    <h1>Alok Raj</h1> 
-                    <p>BGMI</p> 
-                    <p>ESPORTS PLAYER</p>
-                  </div>
-                </div>
-              </div>
-             -->
             
 <br>
 <br>
  <DIV class="M"> 
 <input type="button" value="VIEW ALL MEMBERS"></DIV>
+
+<script>
+  // Function to handle search
+  function handleSearch(event) {
+    event.preventDefault(); // Prevent form submission
+    
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    
+    if (!searchTerm) return; // Don't proceed if search is empty
+    
+    // Get all elements that might contain searchable text
+    const elements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, .flip-card-back');
+    
+    let found = false;
+    
+    // Check each element for the search term
+    elements.forEach(element => {
+      const text = element.textContent.toLowerCase();
+      if (text.includes(searchTerm)) {
+        // Scroll to the element
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Highlight the element temporarily
+        element.style.backgroundColor = 'yellow';
+        setTimeout(() => {
+          element.style.backgroundColor = '';
+        }, 2000);
+        
+        found = true;
+      }
+    });
+    
+    if (!found) {
+      alert('No matching content found for: ' + searchTerm);
+    }
+  }
+
+  // Add event listener to the search form
+  document.querySelector('form[role="search"]').addEventListener('submit', handleSearch);
+</script>
+
 </body>
 </html>

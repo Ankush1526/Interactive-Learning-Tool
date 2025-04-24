@@ -283,7 +283,7 @@ body{
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                      <a class="nav-link" href="index.html">HOME</a>
+                      <a class="nav-link" href="try.html">HOME</a>
                   </li>
                   <li class="nav-item">
                       <a class="nav-link active"aria-current="page"  href="about.html">ABOUT</a>
@@ -294,9 +294,23 @@ body{
                   <li class="nav-item">
                       <a class="nav-link" href="Teams.html">TEAMS</a>
                   </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="login.html">LOGIN AND SIGNUP</a>
-                  </li>
+                  <li class="nav-item d-flex align-items-center">
+                    <?php
+                    session_start();
+                    if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <?php echo htmlspecialchars($_SESSION['username']); ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/profile.php"><i class="bi bi-person-fill"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="/logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a class="nav-link" href="/login.php">LOGIN AND SIGNUP</a>
+                    <?php endif; ?>
+                </li>
                 
               </ul>
               <form class="d-flex" role="search">

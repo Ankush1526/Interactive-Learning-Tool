@@ -185,11 +185,11 @@ try {
             </div>
         </div>
 
-        <div class="action-buttons">
+        <!-- <div class="action-buttons">
             <a href="edit_profile.php" class="btn btn-edit">Edit Profile</a>
             <a href="edit_password.php" class="btn btn-password">Edit Password</a>
             <a href="logout.php" class="btn btn-logout">Logout</a>
-        </div>
+        </div> -->
     </div>
 </body>
 
